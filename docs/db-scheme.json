@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Pago",
+  "type": "object",
+  "properties": {
+    "id": { "type": "string" },
+    "fechaRegistro": { "type": "string", "format": "date-time" },
+    "concepto": { "type": "string" },
+    "cantidadProductos": { "type": "integer" },
+    "quienPaga": { "type": "string" },
+    "aQuienSePaga": { "type": "string" },
+    "montoTotal": { "type": "number" },
+    "estatus": {
+      "type": "string",
+      "enum": ["pendiente", "aprobado", "rechazado"]
+    }
+  },
+  "required": [
+    "id", "fechaRegistro", "concepto", "cantidadProductos",
+    "quienPaga", "aQuienSePaga", "montoTotal", "estatus"
+  ]
+}
+

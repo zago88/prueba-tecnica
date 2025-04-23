@@ -1,0 +1,64 @@
+openapi: 3.0.1
+info:
+  title: API Servicio de Pagos
+  version: 1.0.0
+paths:
+  /pagos:
+    post:
+      summary: Registrar un nuevo pago
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pago'
+      responses:
+        '201':
+          description: Pago registrado exitosamente
+    get:
+      summary: Consultar todos los pagos
+      responses:
+        '200':
+          description: Lista de pagos
+  /pagos/{id}/estatus:
+    patch:
+      summary: Cambiar estatus del pago
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nuevoEstatus:
+                  type: string
+      responses:
+        '200':
+          description: Estatus actualizado
+components:
+  schemas:
+    Pago:
+      type: object
+      properties:
+        id:
+          type: string
+        concepto:
+          type: string
+        cantidadProductos:
+          type: integer
+        quienPaga:
+          type: string
+        aQuienSePaga:
+          type: string
+        montoTotal:
+          type: number
+        estatus:
+          type: string
+        fechaRegistro:
+          type: string
+          format: date-time
+
