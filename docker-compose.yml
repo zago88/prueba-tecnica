@@ -1,45 +1,43 @@
 version: '3.8'
 
 services:
-  mongodb:
+  mongo:
     image: mongo:6.0
     container_name: pagos-mongo
+    restart: unless-stopped
     ports:
       - "27017:27017"
     volumes:
-      - mongo_data:/data/db
-    networks:
-      - pagos-net
+      - mongo-data:/data/db
 
   rabbitmq:
     image: rabbitmq:3.12-management
     container_name: pagos-rabbitmq
+    restart: unless-stopped
     ports:
-      - "5672:5672"     # AMQP
-      - "15672:15672"   # Management UI
+      - "5672:5672"
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
-    networks:
-      - pagos-net
 
-  app:
+  pagos-service:
     build:
       context: .
-    container_name: pagos-app
+      dockerfile: Dockerfile
+    container_name: pagos-service
+    restart: unless-stopped
     ports:
       - "8080:8080"
     depends_on:
-      - mongodb
+      - mongo
       - rabbitmq
-    networks:
-      - pagos-net
     environment:
       SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/pagosdb
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
 
 volumes:
-  mongo_data:
-
-networks:
-  pagos-net:
+  mongo-data:
 
