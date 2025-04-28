@@ -37,3 +37,9 @@ management:
   endpoint:
     health:
       show-details: always
+    info:
+      app:
+        name: pagos-service
+        description: Servicio de gestión de pagos
+        version: 1.0.0
+
