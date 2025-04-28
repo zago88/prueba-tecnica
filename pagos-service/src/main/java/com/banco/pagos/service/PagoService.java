@@ -1,11 +1,14 @@
 package com.banco.pagos.service;
 
+import com.banco.pagos.messaging.PagoPublisher;
 import com.banco.pagos.model.Pago;
 import com.banco.pagos.repository.PagoRepository;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.banco.pagos.messaging.PagoPublisher;
+
 import java.util.Optional;
 
 @Service
@@ -42,6 +45,4 @@ public class PagoService {
     public Optional<Pago> obtenerPagoPorId(String idPago) {
         return pagoRepository.findById(idPago);
     }
-
 }
-

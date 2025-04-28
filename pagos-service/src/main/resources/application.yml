@@ -15,8 +15,14 @@ spring:
 server:
   port: 8080
 
-app:
-  rabbitmq:
-    exchange: pagos.estatus.cambiado
-    routing-key: estatus.cambiado.general
-
+rabbitmq:
+  exchange: pagos.estatus.cambiado
+  routing-key: estatus.cambiado.general
+  listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 1000
+          max-interval: 5000
+          multiplier: 2.0
