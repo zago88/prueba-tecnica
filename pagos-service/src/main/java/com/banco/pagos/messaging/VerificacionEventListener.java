@@ -9,11 +9,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class VerificacionEventListener {
 
-    @RabbitListener(queues = "pagos.notificaciones")
-    public void recibirParaVerificacion(Pago pago) {
-        log.info("✅ [Verificación] Procesando verificación para pago ID [{}], estatus [{}]", pago.getId(), pago.getEstatus());
-
-        // Aquí podrías simular reglas de negocio de verificación antifraude, etc.
+    @RabbitListener(queues = "${app.rabbitmq.routing-key}")
+    public void verificarCambioDeEstatus(Pago pago) {
+        log.info("✅ Verificación recibida: El pago con ID {} ha cambiado a estatus {}", pago.getId(), pago.getEstatus());
+        // Aquí podrías hacer otras acciones, como guardar historial o enviar notificación a otro servicio
     }
 }
 

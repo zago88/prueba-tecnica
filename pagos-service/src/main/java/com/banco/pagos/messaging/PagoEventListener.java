@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PagoEventListener {
 
-    @RabbitListener(queues = "pagos.notificaciones")
+    @RabbitListener(queues = "${app.rabbitmq.routing-key}")
     public void recibirCambioEstatus(Pago pago) {
         log.info("📬 [Listener] Evento recibido - Pago ID [{}] nuevo estatus [{}]", pago.getId(), pago.getEstatus());
         

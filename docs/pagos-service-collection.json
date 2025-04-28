@@ -1,0 +1,75 @@
+{
+  "info": {
+    "name": "Pagos Service API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "b1c43234-7a02-4e5e-97fc-abcdef123456"
+  },
+  "item": [
+    {
+      "name": "Crear Pago",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"concepto\": \"Pago de factura\",\n  \"cantidadProductos\": 3,\n  \"quienPaga\": \"cliente123\",\n  \"quienRecibe\": \"proveedor456\",\n  \"montoTotal\": 1500.50\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/pagos",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["pagos"]
+        }
+      }
+    },
+    {
+      "name": "Cambiar Estatus de Pago",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nuevoEstatus\": \"APROBADO\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/pagos/{{id}}/estatus",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["pagos", "{{id}}", "estatus"]
+        }
+      }
+    },
+    {
+      "name": "Consultar Pago",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8080/pagos/{{id}}",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["pagos", "{{id}}"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "id",
+      "value": "REEMPLAZAR_CON_ID_REAL"
+    }
+  ]
+}
+
