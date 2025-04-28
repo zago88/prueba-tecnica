@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import com.banco.pagos.model.enums.EstatusPago;
 
 @Data
 @Builder
@@ -42,14 +43,7 @@ public class Pago {
     private BigDecimal montoTotal;
 
     @NotBlank(message = "El estatus es obligatorio")
-    private String estatus; // "pendiente", "aprobado", "rechazado"
+    private EstatusPago estatus; // "pendiente", "aprobado", "rechazado"
 
     private LocalDateTime fechaRegistro;
-
-    /**
-     * Inicializamos fechaRegistro automáticamente cuando se construye con Builder si no se asigna.
-     */
-    public static PagoBuilder builder() {
-        return new PagoBuilder().fechaRegistro(LocalDateTime.now());
-    }
 }

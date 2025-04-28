@@ -2,6 +2,7 @@ package com.banco.pagos.service;
 
 import com.banco.pagos.messaging.PagoPublisher;
 import com.banco.pagos.model.Pago;
+import com.banco.pagos.model.enums.EstatusPago;
 import com.banco.pagos.repository.PagoRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,12 +23,13 @@ public class PagoService {
     public Pago crearPago(Pago pago) {
         pago.setId(null); // Forzar a que Mongo genere un nuevo ID
         pago.setFechaRegistro(java.time.LocalDateTime.now());
-        pago.setEstatus("pendiente"); // Siempre inicia en pendiente
+        pago.setEstatus(EstatusPago.PENDIENTE); // Siempre inicia en pendiente
         return pagoRepository.save(pago);
     }
 
     @Transactional
-    public Optional<Pago> cambiarEstatusPago(String idPago, String nuevoEstatus) {
+    public Optional<Pago> cambiarEstatusPago(String idPago, EstatusPago nuevoEstatus) {
+
         Optional<Pago> pagoOptional = pagoRepository.findById(idPago);
 
         if (pagoOptional.isPresent()) {
