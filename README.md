@@ -213,12 +213,13 @@ A continuación, se presentan algunos aspectos a considerar durante el desarroll
 
 ## Diseño de la Arquitectura 
 
-A continuación, se presentan los componentes principales de la arquitectura del proyecto: 
+A continuación, se presentan los componentes principales de la arquitectura del proyecto:
 
-     Servicio de Pago: Es el servicio principal que permite registrar un pago y cambiar el estatus del pago.
-     Base de Datos: Es la base de datos que almacena los datos de los pagos.
-     RabbitMQ: Es el mensaje broker que se utiliza para notificar a los procesos cuando se cambie el estatus del pago.
-     Proceso de Notificación: Es el proceso que recibe los mensajes de cambio de estatus del pago desde RabbitMQ y actualiza el estatus correspondiente en la base de datos.
+- **Servicio de Pago (SP):** Gestiona el registro y cambio de estatus de pagos, publica eventos a RabbitMQ.
+- **Base de Datos (BD):** MongoDB para almacenar los datos de pagos de forma persistente.
+- **RabbitMQ (RMQ):** Broker de mensajería para propagar cambios de estatus de forma desacoplada.
+- **Proceso de Notificación (PN):** Consumer que recibe eventos de RabbitMQ y procesa notificaciones internas.
+- **Proceso de Verificación (PV):** Segundo Consumer que procesa eventos para iniciar verificación antifraude.
      
 
 ### Capas de la Aplicación 
@@ -232,13 +233,12 @@ La aplicación tiene las siguientes capas:
 
 ### Componentes 
 
-A continuación, se presentan algunos componentes importantes en la arquitectura del proyecto: 
+- **Servicio de Pago (SP):** Exposición de APIs REST para registrar y cambiar estatus de pagos.
+- **Base de Datos (BD):** Persistencia de pagos usando MongoDB.
+- **RabbitMQ (RMQ):** Orquestación de eventos de cambio de estatus mediante exchange tipo topic.
+- **Proceso de Notificación (PN):** Consumer que procesa eventos de cambios para notificaciones.
+- **Proceso de Verificación (PV):** Consumer que procesa eventos para iniciar validaciones antifraude o validaciones adicionales.
 
-     Servicio de Pago (SP): Es el componente que permite registrar un pago y cambiar el estatus del pago.
-     Base de Datos (BD): Es el componente que almacena los datos de los pagos.
-     RabbitMQ (RMQ): Es el componente que se utiliza para notificar a los procesos cuando se cambie el estatus del pago.
-     Proceso de Notificación (PN): Es el componente que recibe los mensajes de cambio de estatus del pago desde RabbitMQ y actualiza el estatus correspondiente en la base de datos.
-     
 
 ### Diagramas
 
@@ -247,16 +247,23 @@ A continuación, se presenta un diagrama de contenedores con correspondencia al 
 ```mermaid
 graph TD
 
-    %% Persona
+    %% Personas
     Usuario[/"👤 Usuario"/]
 
     %% Sistema principal
     subgraph "🧩 Sistema de Pagos (Contenedores)"
         UI["🖥️ Interfaz de Usuario\n(Web/App Móvil)\nPermite iniciar pagos y consultar estado"]
-        SP["🔧 Servicio de Pago\nJava 17 + Spring Boot\nExpone API REST, procesa lógica de negocio,\npublica eventos a RabbitMQ"]
-        BD["💾 Base de Datos\nMongoDB 6.0+\nColección de pagos con índices por estatus y fecha"]
-        RMQ["📬 RabbitMQ\nBroker de mensajería\nPublica y enruta eventos asincrónicos"]
-        PN["📣 Proceso de Notificación\nWorker interno\nConsume eventos y actualiza estado en MongoDB"]
+        SP["🔧 Servicio de Pago\nJava 17 + Spring Boot\nGestiona pagos y publica eventos"]
+        BD["💾 Base de Datos\nMongoDB 6.0+\nColección de pagos"]
+        EX["📬 Exchange RabbitMQ\npagos.estatus.cambiado (topic)"]
+        QN["📥 Queue: pagos.notificaciones\nRecepción de eventos para notificación"]
+        QV["📥 Queue: pagos.verificacion\nRecepción de eventos para verificación antifraude"]
+    end
+
+    %% Consumidores internos
+    subgraph "🔄 Procesos internos"
+        PN["📣 Proceso Notificación Listener\n(PagoEventListener)"]
+        PV["🔍 Proceso Verificación Listener\n(VerificacionEventListener)"]
     end
 
     %% Sistema externo
@@ -268,14 +275,17 @@ graph TD
     Usuario --> UI
     UI --> SP
     SP --> BD
-    SP --> RMQ
-    RMQ --> PN
-    PN --> BD
-    RMQ <--> SE
+    SP --> EX
+    EX --> QN
+    EX --> QV
+    QN --> PN
+    QV --> PV
+    PV --> SE
 
 ```
      
 ![image](./docs/img/diagrama-1_2.png)
 
 
+> **Nota:** El evento de cambio de estatus publicado por el Servicio de Pago es enviado a dos colas distintas. Esto permite que múltiples procesos internos (notificación y verificación) reaccionen de forma desacoplada, siguiendo un patrón de Event-Driven Architecture (EDA).
 
