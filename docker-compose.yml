@@ -15,8 +15,8 @@ services:
     container_name: pagos-rabbitmq
     restart: unless-stopped
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "5672:5672"    # RabbitMQ Broker
+      - "15672:15672"  # RabbitMQ Management UI
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
@@ -33,10 +33,13 @@ services:
       - mongo
       - rabbitmq
     environment:
-      SPRING_PROFILES_ACTIVE: dev
       SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/pagosdb
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      APP_RABBITMQ_EXCHANGE: pagos.estatus.cambiado
+      APP_RABBITMQ_ROUTING-KEY: estatus.cambiado.general
 
 volumes:
   mongo-data:
