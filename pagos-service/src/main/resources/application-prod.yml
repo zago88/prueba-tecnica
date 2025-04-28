@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: pagos-service
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/pagosdb
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+server:
+  port: 8080

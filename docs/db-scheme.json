@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Pago",
+  "type": "object",
+  "properties": {
+    "concepto": {
+      "type": "string",
+      "description": "Concepto del pago"
+    },
+    "cantidadProductos": {
+      "type": "integer",
+      "description": "Cantidad de productos incluidos en el pago"
+    },
+    "quienPaga": {
+      "type": "string",
+      "description": "Identificador de quién realiza el pago"
+    },
+    "quienRecibe": {
+      "type": "string",
+      "description": "Identificador de quién recibe el pago"
+    },
+    "montoTotal": {
+      "type": "number",
+      "description": "Monto total del pago"
+    },
+    "estatus": {
+      "type": "string",
+      "enum": ["PENDIENTE", "APROBADO", "RECHAZADO"],
+      "description": "Estatus actual del pago"
+    },
+    "fechaRegistro": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Fecha y hora de registro del pago"
+    }
+  },
+  "required": [
+    "concepto",
+    "cantidadProductos",
+    "quienPaga",
+    "quienRecibe",
+    "montoTotal",
+    "estatus",
+    "fechaRegistro"
+  ]
+}
+

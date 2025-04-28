@@ -1,49 +1,60 @@
-# prueba-tecnica
-Prueba técnica desarrollo de demo de un sistema de pagos.
+# Pagos Service API
 
-## Requisitos 
+Descripción del ejercicio.
 
-A continuación, se presentan los requisitos del ejercicio: 
+```
+EJERCICIO
+Objetivo
+Realizar un proyecto que tenga los siguientes servicios:
+• Dar de alta un pago con al menos los siguientes atributos:
+– concepto
+– cantidad de productos
+– quién realiza el pago
+– a quién se le paga
+– monto total
+– estatus del pago
+• Tener la capacidad de verificar el estatus del pago
+• Tener la capacidad de cambiar el estatus del pago
+• Una vez que el estatus cambie, notificarlo a RabbitMQ, pensar que con este evento podría
+haber 2 o más tareas (consumers).
+Herramientas:
+• Java 17
+• Spring boot 3.2.0+
+• MongoDB 6.0+
+• RabbitMQ 3.12+
+• jUnit
+• Docker
+Entregables:
+• código Java
+• Esquema de Base de datos (json schema)
+• Archivos docker como .Dockerfile y docker-compose
+• Collection de postman
+• Doc de definición de exchanges/queues/mensaje
+Proporcionar el producto del ejercicio por medio de un repositorio git (github,
+bitbucket, etc)
+```
 
-- Requisito 1: Crear un servicio de pago que permita registrar un pago y cambiar el estatus del pago. 
+---
 
-     El servicio debe poder registrar un pago con los siguientes datos:
-     
+## 📋 Índice de Documentación
 
-     Id de la transacción
-     Fecha de registro
-     Monto del pago
-     Estadío actual (pendiente, aprobado o rechazado)
-     
+- [Plan de Desarrollo](docs/plan-desarrollo.md)
+- [Checklist de Entregables](docs/checklist-entregables.md)
+- [Definición de Exchanges, Queues y Mensajes](docs/queues-and-messages.md)
+- [Esquema de Base de Datos (JSON Schema)](docs/db-scheme.json)
+- [Collection de Postman para pruebas](docs/pagos-service-collection.json)
+- [Configuración de ambiente de desarrollo](docs/setup-dev-md)
 
-     El servicio debe poder cambiar el estatus del pago.
-     El servicio debe notificar a RabbitMQ cuando se cambie el estatus del pago.
-     
+---
 
-- Requisito 2: Crear un proceso que reciba los mensajes de cambio de estatus del pago desde RabbitMQ y actualice el estatus correspondiente en la base de datos. 
+### Valor agregado 
 
-     El proceso debe poder recibir los mensajes de cambio de estatus del pago desde RabbitMQ.
-     El proceso debe actualizar el estatus correspondiente en la base de datos.
-     El proceso debe asegurarse de que el estatus sea válido antes de actualizarlo.
-     
+- Spring actuator (monitoreo de eventos) 
+- swagger como documentación. 
 
-- Requisito 3: Crear una base de datos para almacenar los datos de los pagos. 
+#### No funcionales obligatorios 
 
-     La base de datos debe tener una estructura adecuada para almacenar los datos de los pagos.
-     La base de datos debe ser capaz de soportar un gran número de registros y consultas.
-     
-
-- Requisito 4: Crear un proceso que se encargue de la comunicación con RabbitMQ. 
-
-     El proceso debe poder conectarse a RabbitMQ y publicar mensajes cuando se cambie el estatus del pago.
-     El proceso debe poder recibir mensajes desde RabbitMQ y procesarlos adecuadamente.
-     
-
-- Requisito 5: Desplegar la aplicación en un entorno de producción. 
-
-     La aplicación debe ser capaz de desplegarse en un entorno de producción sin problemas.
-     La aplicación debe estar preparada para soportar un gran número de usuarios y solicitudes.
-     
+- Redacción clara y concisa del README 
 
 ## Análisis 
 
@@ -55,12 +66,13 @@ A continuación, se presentan algunos aspectos a considerar durante el desarroll
 
 ## Diseño de la Arquitectura 
 
-A continuación, se presentan los componentes principales de la arquitectura del proyecto: 
+A continuación, se presentan los componentes principales de la arquitectura del proyecto:
 
-     Servicio de Pago: Es el servicio principal que permite registrar un pago y cambiar el estatus del pago.
-     Base de Datos: Es la base de datos que almacena los datos de los pagos.
-     RabbitMQ: Es el mensaje broker que se utiliza para notificar a los procesos cuando se cambie el estatus del pago.
-     Proceso de Notificación: Es el proceso que recibe los mensajes de cambio de estatus del pago desde RabbitMQ y actualiza el estatus correspondiente en la base de datos.
+- **Servicio de Pago (SP):** Gestiona el registro y cambio de estatus de pagos, publica eventos a RabbitMQ.
+- **Base de Datos (BD):** MongoDB para almacenar los datos de pagos de forma persistente.
+- **RabbitMQ (RMQ):** Broker de mensajería para propagar cambios de estatus de forma desacoplada.
+- **Proceso de Notificación (PN):** Consumer que recibe eventos de RabbitMQ y procesa notificaciones internas.
+- **Proceso de Verificación (PV):** Segundo Consumer que procesa eventos para iniciar verificación antifraude.
      
 
 ### Capas de la Aplicación 
@@ -74,39 +86,70 @@ La aplicación tiene las siguientes capas:
 
 ### Componentes 
 
-A continuación, se presentan algunos componentes importantes en la arquitectura del proyecto: 
+- **Servicio de Pago (SP):** Exposición de APIs REST para registrar y cambiar estatus de pagos.
+- **Base de Datos (BD):** Persistencia de pagos usando MongoDB.
+- **RabbitMQ (RMQ):** Orquestación de eventos de cambio de estatus mediante exchange tipo topic.
+- **Proceso de Notificación (PN):** Consumer que procesa eventos de cambios para notificaciones.
+- **Proceso de Verificación (PV):** Consumer que procesa eventos para iniciar validaciones antifraude o validaciones adicionales.
 
-     Servicio de Pago (SP): Es el componente que permite registrar un pago y cambiar el estatus del pago.
-     Base de Datos (BD): Es el componente que almacena los datos de los pagos.
-     RabbitMQ (RMQ): Es el componente que se utiliza para notificar a los procesos cuando se cambie el estatus del pago.
-     Proceso de Notificación (PN): Es el componente que recibe los mensajes de cambio de estatus del pago desde RabbitMQ y actualiza el estatus correspondiente en la base de datos.
-     
+### Diagramas
 
-### Diagrama de Clases 
-
-A continuación, se presenta un diagrama de clases que muestra las relaciones entre los componentes: 
+A continuación, se presenta un diagrama de contenedores con correspondencia al modelo C4: 
 
 ```mermaid
-graph LR;
-    
-    subgraph "Capa de Presentación"
-        A["Interfaz de Usuario"] 
+graph TD
+
+    %% Personas
+    Usuario[/"👤 Usuario"/]
+
+    %% Sistema principal
+    subgraph "🧩 Sistema de Pagos (Contenedores)"
+        UI["🖥 Interfaz de Usuario\n(Web/App Móvil)\nPermite iniciar pagos y consultar estado"]
+        SP["🔧 Servicio de Pago\nJava 17 + Spring Boot\nGestiona pagos y publica eventos"]
+        BD["💾 Base de Datos\nMongoDB 6.0+\nColección de pagos"]
+        EX["📬 Exchange RabbitMQ\npagos.estatus.cambiado (topic)"]
+        QN["📥 Queue: pagos.notificaciones\nRecepción de eventos para notificación"]
+        QV["📥 Queue: pagos.verificacion\nRecepción de eventos para verificación antifraude"]
     end
 
-    subgraph "Capa de Negocio"
-        A <--> B["Servicio de Pago (SP)"]
+%% Consumidores internos
+    subgraph "🔄 Procesos internos"
+        PN["📣 Proceso Notificación Listener\n(PagoEventListener)"]
+        PV["🔍 Proceso Verificación Listener\n(VerificacionEventListener)"]
     end
 
-    subgraph "Capa de Datos"
-        B <--> C["Base de Datos (BD)"]
-        B <--> D["RabbitMQ (RMQ)"]
+    %% Sistema externo
+    subgraph "🌐 Servicios Externos"
+        SE["🏦 Servicio Externo\nVerificación bancaria o antifraude vía API"]
     end
-    
-    subgraph "Servicios Externos"
-    D --> E["Proceso de Notificación (PN)"]
-    D <--> F["Servicio Externo"]
-    end
+
+    %% Relaciones
+    Usuario --> UI
+    UI --> SP
+    SP --> BD
+    SP --> EX
+    EX --> QN
+    EX --> QV
+    QN --> PN
+    QV --> PV
+    PV --> SE
+
 ```
      
-![image](./docs/img/diagrama-1_1.png)
+![image](./docs/img/diagrama-1_2.png)
+
+
+> **Nota:** El evento de cambio de estatus publicado por el Servicio de Pago es enviado a dos colas distintas. Esto permite que múltiples procesos internos (notificación y verificación) reaccionen de forma desacoplada, siguiendo un patrón de Event-Driven Architecture (EDA).
+
+## Documentación Swagger
+
+Acceso en:
+
+http://localhost:8080/swagger-ui.html
+
+## Endpoints Actuator
+
+Healthcheck disponible en:
+
+http://localhost:8080/actuator/health
 

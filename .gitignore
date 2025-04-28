@@ -1,24 +1,28 @@
-# Compiled class file
+# Maven
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Java classes
 *.class
 
-# Log file
+# Logs
 *.log
 
-# BlueJ files
-*.ctxt
+# IDEs
+.idea/
+*.iml
+.vscode/
+*.swp
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
+# Docker
 *.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
+docker-compose.override.yml
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de configuración sensibles
+src/main/resources/application-dev.yml
+src/main/resources/application-prod.yml
+
