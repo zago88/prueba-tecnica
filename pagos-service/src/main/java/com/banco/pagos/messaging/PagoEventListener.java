@@ -1,5 +1,6 @@
 package com.banco.pagos.messaging;
 
+import com.banco.pagos.config.RabbitMQConfig;
 import com.banco.pagos.model.Pago;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PagoEventListener {
 
-    @RabbitListener(queues = "${app.rabbitmq.routing-key}")
+    @RabbitListener(queues = RabbitMQConfig.QUEUE_NOTIFICACIONES)
     public void recibirCambioEstatus(Pago pago) {
         log.info("📬 [Listener] Evento recibido - Pago ID [{}] nuevo estatus [{}]", pago.getId(), pago.getEstatus());
         
