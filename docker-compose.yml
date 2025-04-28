@@ -11,7 +11,7 @@ services:
       - mongo-data:/data/db
 
   rabbitmq:
-    image: rabbitmq:3.12-management
+    image: rabbitmq:4.1-management
     container_name: pagos-rabbitmq
     restart: unless-stopped
     ports:
